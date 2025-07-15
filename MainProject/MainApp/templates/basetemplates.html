@@ -42,12 +42,13 @@
             color: #4f8cff !important;
             font-weight: 500;
             border-radius: 0.5rem;
-            transition: background 0.2s, color 0.2s;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
             padding: 0.5rem 1rem;
         }
         .nav-link.active, .nav-link:hover {
             background: #e0f2fe;
             color: #1e293b !important;
+            box-shadow: 0 2px 8px 0 rgba(110,231,183,0.10);
         }
         .dropdown-menu {
             background: #e0f2fe;
@@ -72,7 +73,12 @@
             font-weight: 500;
         }
         .container {
-            max-width: 900px;
+            max-width: 950px;
+        }
+        .shadow-card {
+            box-shadow: 0 4px 24px 0 rgba(79,140,255,0.10), 0 1.5px 6px 0 rgba(110,231,183,0.10);
+            border-radius: 1rem;
+            background: #fff;
         }
         footer {
             background: linear-gradient(90deg, #4f8cff 0%, #6ee7b7 100%);
@@ -85,54 +91,57 @@
             letter-spacing: 1px;
             box-shadow: 0 -2px 12px 0 rgba(79,140,255,0.08);
         }
+        @media (max-width: 600px) {
+            .navbar-brand { font-size: 1.2rem; }
+            .logo-img { height: 32px; width: 32px; }
+            .container { max-width: 100%; }
+        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <nav class="navbar navbar-expand-lg shadow-sm">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="{% url 'index' %}">
-                    <img src="{% static 'images/galaxy.jpg' %}" alt="โลโก้" class="logo-img"/>
-                    MySite
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="{% url 'index' %}">
-                                <i class="fa-solid fa-house"></i> หน้าหลัก
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'person' %}">
-                                <i class="fa-solid fa-id-card"></i> ข้อมูลพนักงาน<br>
-                                <span style="font-size:0.95em;color:#555;"></span>
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" href="https://www.facebook.com/anirut.sakunsi.3" target="_blank" rel="noopener">
-                                <i class="fa-solid fa-phone"></i> ติดต่อสอบถาม<br>
-                                <span style="font-size:0.95em;color:#555;"></span>
-                            </a>
-                        </li>
-                    </ul>
-                    <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="ค้นหา..." aria-label="Search"/>
-                        <button class="btn btn-warning" type="submit"><i class="fa-solid fa-magnifying-glass"></i> ค้นหา</button>
-                    </form>
-                </div>
+    <nav class="navbar navbar-expand-lg shadow-sm">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'index' %}">
+                <img src="{% static 'images/galaxy.jpg' %}" alt="โลโก้" class="logo-img"/>
+                MySite
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'index' %}active{% endif %}" aria-current="page" href="{% url 'index' %}">
+                            <i class="fa-solid fa-house"></i> หน้าหลัก
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.resolver_match.url_name == 'person' %}active{% endif %}" href="{% url 'person' %}">
+                            <i class="fa-solid fa-id-card"></i> ข้อมูลพนักงาน
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="https://www.facebook.com/anirut.sakunsi.3" target="_blank" rel="noopener">
+                            <i class="fa-solid fa-phone"></i> ติดต่อสอบถาม
+                        </a>
+                    </li>
+                </ul>
+                <form class="d-flex" role="search">
+                    <input class="form-control me-2" type="search" placeholder="ค้นหา..." aria-label="Search"/>
+                    <button class="btn btn-warning" type="submit"><i class="fa-solid fa-magnifying-glass"></i> ค้นหา</button>
+                </form>
             </div>
-        </nav>
+        </div>
+    </nav>
+    <div class="container">
         <div class="mt-4">
             {% block content %}
             {% endblock %}
         </div>
     </div>
     <footer>
-        <div>© 2025 MySite | พัฒนาโดย Django & Bootstrap</div>
+        <div>© 2025 MySite | พัฒนาโดย Django &amp; Bootstrap</div>
     </footer>
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
 </body>
 </html>

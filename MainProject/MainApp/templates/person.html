@@ -4,6 +4,9 @@
 {% block content %}
 <div class="container my-4">
     <h2 class="text-center mb-4">ตารางรายชื่อบุคคล (Person Table)</h2>
+    <div class="mb-3 text-end">
+        <a href="{% url 'person_add' %}" class="btn btn-success">+ เพิ่มข้อมูล</a>
+    </div>
     <div class="table-responsive">
         <table class="table table-bordered table-hover align-middle bg-white shadow-sm">
             <thead class="table-primary">
@@ -12,6 +15,7 @@
                     <th>ชื่อ (Name)</th>
                     <th>อายุ (Age)</th>
                     <th>วันที่เพิ่ม (Date Added)</th>
+                    <th>การจัดการ</th>
                 </tr>
             </thead>
             <tbody>
@@ -21,10 +25,14 @@
                     <td>{{ person.name }}</td>
                     <td>{{ person.age }}</td>
                     <td>{{ person.date }}</td>
+                    <td>
+                        <a href="{% url 'person_edit' person.id %}" class="btn btn-warning btn-sm">แก้ไข</a>
+                        <a href="{% url 'person_delete' person.id %}" class="btn btn-danger btn-sm" onclick="return confirm('ยืนยันการลบ?');">ลบ</a>
+                    </td>
                 </tr>
                 {% empty %}
                 <tr>
-                    <td colspan="4" class="text-center text-muted">ไม่พบข้อมูลบุคคล</td>
+                    <td colspan="5" class="text-center text-muted">ไม่พบข้อมูลบุคคล</td>
                 </tr>
                 {% endfor %}
             </tbody>
