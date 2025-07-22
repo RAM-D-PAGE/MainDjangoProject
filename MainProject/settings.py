@@ -24,13 +24,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-8urqo)1+i-af&g0sc_u5t9w@&i#4mwb02kd(y^kmv2c$3z@jy*'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = True  # เปลี่ยนเป็น False เมื่อ deploy จริง
 
-# Local development
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1']
+# Development vs Production settings
+ALLOWED_HOSTS = ['userprime.pythonanywhere.com', 'localhost', '127.0.0.1', '::1']
 
 # PythonAnywhere deployment settings (uncomment when deploying)
-# DEBUG = False  # เปลี่ยนเป็น False เมื่อ deploy จริง
+# DEBUG = False
 # ALLOWED_HOSTS = ['userprime.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 
@@ -163,11 +163,11 @@ if DEBUG:
         }
     }
 else:
-    # Production cache settings (placeholder)
+    # Production cache settings - ใช้ database cache แทน Redis
     CACHES = {
         'default': {
-            'BACKEND': 'django.core.cache.backends.redis.RedisCache',
-            'LOCATION': 'redis://127.0.0.1:6379/1',
+            'BACKEND': 'django.core.cache.backends.db.DatabaseCache',
+            'LOCATION': 'cache_table',
         }
     }
 
