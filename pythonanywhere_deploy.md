@@ -10,12 +10,92 @@
 
 เปิด **Bash Console** ใน PythonAnywhere และรันคำสั่ง:
 
+#### วิธีที่ 1: Git Clone (แนะนำ)
 ```bash
-# Clone repository
+# ตรวจสอบว่ามีโฟลเดอร์อยู่หรือไม่
+ls -la
+
+# หากมีโฟลเดอร์ MainDjangoProject อยู่แล้ว ให้เลือกวิธีใดวิธีหนึ่ง:
+
+# ตัวเลือก A: ลบโฟลเดอร์เก่า (ระวัง: จะเสียข้อมูลทั้งหมด)
+rm -rf MainDjangoProject
+
+# ตัวเลือก B: เปลี่ยนชื่อโฟลเดอร์เก่า (ปลอดภัยกว่า)
+mv MainDjangoProject MainDjangoProject_backup_$(date +%Y%m%d_%H%M)
+
+# ตัวเลือก C: Clone ไปโฟลเดอร์ชื่อใหม่
+git clone https://github.com/RAM-D-PAGE/MainDjangoProject.git MainDjangoProject_new
+cd MainDjangoProject_new
+
+# หลังจากทำตัวเลือก A หรือ B แล้ว Clone repository ใหม่
 git clone https://github.com/RAM-D-PAGE/MainDjangoProject.git
 
 # เข้าไปในโฟลเดอร์โปรเจค
 cd MainDjangoProject
+```
+
+**หากเจอปัญหา Authentication:**
+```bash
+# หาก repository เป็น private หรือต้องการ authentication
+git clone https://RAM-D-PAGE@github.com/RAM-D-PAGE/MainDjangoProject.git
+```
+
+#### วิธีที่ 3: หากมีโฟลเดอร์เก่าและต้องการอัปเดต
+
+```bash
+# เข้าไปในโฟลเดอร์ที่มีอยู่
+cd MainDjangoProject
+
+# ดึงการอัปเดตล่าสุดจาก GitHub
+git pull origin main
+
+# หากเจอปัญหา conflict
+git reset --hard origin/main
+
+# หรือถ้าไม่ใช่ Git repository
+cd ..
+rm -rf MainDjangoProject
+git clone https://github.com/RAM-D-PAGE/MainDjangoProject.git
+cd MainDjangoProject
+```
+```bash
+# ดาวน์โหลด ZIP file
+wget https://github.com/RAM-D-PAGE/MainDjangoProject/archive/refs/heads/main.zip
+
+# แตกไฟล์
+unzip main.zip
+
+# เปลี่ยนชื่อโฟลเดอร์
+mv MainDjangoProject-main MainDjangoProject
+
+# เข้าไปในโฟลเดอร์โปรเจค
+cd MainDjangoProject
+
+# ตั้งค่า git ใหม่ (ถ้าต้องการ)
+git init
+git remote add origin https://github.com/RAM-D-PAGE/MainDjangoProject.git
+```
+
+#### วิธีที่ 3: หาก Repository เป็น Private
+```bash
+# ใช้ Personal Access Token
+git clone https://YOUR_TOKEN@github.com/RAM-D-PAGE/MainDjangoProject.git
+
+# หรือตั้งค่า credentials
+git config --global credential.helper store
+git clone https://github.com/RAM-D-PAGE/MainDjangoProject.git
+```
+
+#### วิธีที่ 4: ตรวจสอบปัญหา
+```bash
+# ตรวจสอบ git version
+git --version
+
+# ทดสอบการเข้าถึง GitHub
+curl -I https://github.com
+
+# ตรวจสอบ DNS
+nslookup github.com
 ```
 
 ### 3. สร้าง Virtual Environment
@@ -186,6 +266,56 @@ python manage.py runserver
 (แทนที่ `yourusername` ด้วยชื่อผู้ใช้ PythonAnywhere ของคุณ)
 
 ## 🚨 แก้ไขปัญหาทั่วไป
+
+### ปัญหา: ไม่สามารถ Clone จาก GitHub
+
+#### Error: "fatal: unable to access" หรือ Connection timeout
+
+**วิธีแก้:**
+```bash
+# 1. ตรวจสอบการเชื่อมต่อ
+ping github.com
+curl -I https://github.com
+
+# 2. ใช้ HTTP แทน HTTPS
+git clone http://github.com/RAM-D-PAGE/MainDjangoProject.git
+
+# 3. ตั้งค่า proxy (หาก PythonAnywhere มี proxy)
+git config --global http.proxy http://proxy.server:port
+git config --global https.proxy https://proxy.server:port
+
+# 4. เพิ่ม timeout
+git config --global http.lowSpeedLimit 0
+git config --global http.lowSpeedTime 999999
+```
+
+#### Error: "Repository not found" (403/404)
+
+**วิธีแก้:**
+```bash
+# 1. ตรวจสอบ URL
+echo "https://github.com/RAM-D-PAGE/MainDjangoProject.git"
+
+# 2. ถ้า repo เป็น private ใช้ token
+git clone https://YOUR_GITHUB_TOKEN@github.com/RAM-D-PAGE/MainDjangoProject.git
+
+# 3. ตั้งค่า credentials
+git config --global user.name "RAM-D-PAGE"
+git config --global user.email "your-email@example.com"
+```
+
+#### วิธีอื่น: Upload ไฟล์โดยตรง
+
+```bash
+# 1. สร้างโฟลเดอร์
+mkdir MainDjangoProject
+cd MainDjangoProject
+
+# 2. ใช้ Files tab ใน PythonAnywhere Dashboard
+# - อัปโหลดไฟล์ .zip ของโปรเจค
+# - แตกไฟล์ใน Bash Console
+unzip your-project.zip
+```
 
 ### ปัญหา: เว็บไซต์ไม่ทำงานหลังอัปเดต
 
