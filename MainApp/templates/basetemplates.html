@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block title %}{% endblock %}</title>
     {% load static %}
-    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <!-- Bootstrap CSS with fallback -->
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}" onerror="this.onerror=null;this.href='https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css';">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
     <style>
@@ -139,6 +140,7 @@
     <footer>
         <div>© 2025 MySite | พัฒนาโดย Django & Bootstrap</div>
     </footer>
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <!-- Bootstrap JavaScript with fallback -->
+    <script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}" onerror="document.write('<script src=&quot;https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js&quot;><\/script>')"></script>
 </body>
 </html>
