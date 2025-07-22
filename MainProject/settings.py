@@ -30,8 +30,8 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1']
 
 # PythonAnywhere deployment settings (uncomment when deploying)
-DEBUG = False  # เปลี่ยนเป็น False เมื่อ deploy จริง
-ALLOWED_HOSTS = ['userprime.pythonanywhere.com', 'localhost', '127.0.0.1']
+# DEBUG = False  # เปลี่ยนเป็น False เมื่อ deploy จริง
+# ALLOWED_HOSTS = ['userprime.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -259,10 +259,9 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 
 # PythonAnywhere Static and Media Files Configuration
-# Uncomment these lines when deploying to PythonAnywhere:
-
-# STATIC_ROOT = '/home/yourusername/MainDjangoProject/static'
-# MEDIA_ROOT = '/home/yourusername/MainDjangoProject/media'
+# For PythonAnywhere deployment (uncomment when deploying):
+# STATIC_ROOT = '/home/USERPrime/MainDjangoProject/static'
+# MEDIA_ROOT = '/home/USERPrime/MainDjangoProject/media'
 
 # For development (keep these active for local development)
 if DEBUG:
@@ -273,12 +272,12 @@ if DEBUG:
     ]
     MEDIA_URL = '/media/'
     MEDIA_ROOT = BASE_DIR / 'media'
-# else:
-#     # For production (PythonAnywhere)
-#     STATIC_URL = '/static/'
-#     STATIC_ROOT = '/home/yourusername/MainDjangoProject/static'
-#     MEDIA_URL = '/media/'  
-#     MEDIA_ROOT = '/home/yourusername/MainDjangoProject/media'
+else:
+    # For production (PythonAnywhere)
+    STATIC_URL = '/static/'
+    STATIC_ROOT = '/home/USERPrime/MainDjangoProject/static'
+    MEDIA_URL = '/media/'  
+    MEDIA_ROOT = '/home/USERPrime/MainDjangoProject/media'
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
 
 # Form optimization

@@ -1,13 +1,19 @@
-# Django และ dependencies หลัก
+# Django และ dependencies หลัก - เหมาะสำหรับ Python 3.10
 Django>=5.2.3,<6.0
 
-# Database และ Cache (สำหรับ production)
-redis>=5.0.0
-psycopg2-binary>=2.9.0  # สำหรับ PostgreSQL
-mysqlclient>=2.2.0      # สำหรับ MySQL
-
-# Performance และ Monitoring
+# Performance และ Monitoring (สำหรับ development)
 django-debug-toolbar>=4.0.0
+
+# Web Server สำหรับ production (PythonAnywhere รองรับ)
+gunicorn>=20.1.0
+
+# Security และ Environment Variables
+python-decouple>=3.8
+
+# Database drivers (ใช้ตามความต้องการ)
+# redis>=5.0.0  # ใช้เมื่อต้องการ Redis cache
+# psycopg2-binary>=2.9.0  # สำหรับ PostgreSQL
+# mysqlclient>=2.2.0      # สำหรับ MySQL
 django-extensions>=3.2.0
 
 # Security
