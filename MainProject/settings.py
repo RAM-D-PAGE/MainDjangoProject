@@ -30,8 +30,8 @@ DEBUG = True
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1']
 
 # PythonAnywhere deployment settings (uncomment when deploying)
-# DEBUG = False
-# ALLOWED_HOSTS = ['yourusername.pythonanywhere.com', 'localhost', '127.0.0.1']
+DEBUG = False  # เปลี่ยนเป็น False เมื่อ deploy จริง
+ALLOWED_HOSTS = ['userprime.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
