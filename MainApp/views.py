@@ -1,12 +1,16 @@
 # Django imports
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, JsonResponse
 from django.contrib import messages
 from django.views.decorators.csrf import csrf_protect
+from django.views.decorators.cache import cache_page
+from django.views.decorators.http import require_http_methods
 from django.core.exceptions import ValidationError
 from django.db import transaction
 from django.utils.html import escape
 from django.utils import timezone
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.db.models import Q
 
 # Python imports
 import logging
@@ -32,47 +36,47 @@ def about(request):
 # =============================================================================
 
 def person(request):
-    """หน้าแสดงรายการบุคคล - อัปเดตข้อมูลล่าสุดเสมอ"""
+    """หน้าแสดงรายการบุคคล - ปรับปรุงประสิทธิภาพด้วย pagination และ search"""
     try:
-        # ดึงข้อมูลบุคคลทั้งหมด เรียงตามวันที่สร้างล่าสุด
-        all_persons = Person.objects.all().order_by('-date')
+        # รับพารามิเตอร์การค้นหา
+        search_query = request.GET.get('search', '').strip()
+        page_number = request.GET.get('page', 1)
         
-        # สถิติเพิ่มเติม
-        total_count = all_persons.count()
-        
-        # คำนวณอายุเฉลี่ย
-        if total_count > 0:
-            total_age = sum(person.age for person in all_persons)
-            avg_age = total_age / total_count
+        # ดึงข้อมูลพร้อม search
+        if search_query:
+            all_persons = Person.search_persons(search_query)
         else:
-            avg_age = 0
+            all_persons = Person.objects.filter(is_active=True).order_by('-date')
+        
+        # Pagination
+        paginator = Paginator(all_persons, 10)  # 10 รายการต่อหน้า
+        try:
+            persons_page = paginator.page(page_number)
+        except PageNotAnInteger:
+            persons_page = paginator.page(1)
+        except EmptyPage:
+            persons_page = paginator.page(paginator.num_pages)
+        
+        # ใช้ cache สำหรับสถิติ
+        stats = Person.get_statistics()
         
         context = {
-            'persons': all_persons,
-            'total_count': total_count,
-            'avg_age': avg_age,
+            'persons': persons_page,
+            'search_query': search_query,
+            'total_count': stats['total_count'],
+            'avg_age': round(stats['avg_age'], 1),
+            'age_distribution': stats['age_distribution'],
+            'has_persons': stats['total_count'] > 0,
             'today': timezone.now().date(),
         }
         
-        # ไม่ใช้ cache หากมี refresh parameter
-        response = render(request, 'person.html', context)
-        
-        # ป้องกัน browser cache
-        if request.GET.get('refresh'):
-            response['Cache-Control'] = 'no-cache, no-store, must-revalidate'
-            response['Pragma'] = 'no-cache'
-            response['Expires'] = '0'
-        
-        return response
+        logger.info(f"Person list displayed. Total: {stats['total_count']}, Search: '{search_query}'")
+        return render(request, 'person.html', context)
         
     except Exception as e:
-        logger.error(f"Error loading person list: {e}")
-        return render(request, 'person.html', {
-            'persons': [],
-            'total_count': 0,
-            'avg_age': 0,
-            'today': timezone.now().date(),
-        })
+        logger.error(f"Error in person view: {str(e)}")
+        messages.error(request, 'เกิดข้อผิดพลาดในการโหลดข้อมูล')
+        return render(request, 'person.html', {'persons': [], 'total_count': 0, 'avg_age': 0})
 
 def about(request):
     return render(request, 'about.html')
@@ -168,35 +172,32 @@ def from_view(request):
     return render(request, 'from_view.html', context)
 
 @csrf_protect
+@require_http_methods(["POST"])
 def delete_person(request):
-    """ลบข้อมูลบุคคล"""
-    if request.method == 'POST':
-        try:
-            person_id = request.POST.get('person_id')
-            logger.info(f"Delete request received for person_id: {person_id}")
-            
-            if not person_id:
-                messages.error(request, 'ไม่พบข้อมูลที่ต้องการลบ')
-                logger.warning("No person_id provided in delete request")
-                return redirect('person')
-            
-            with transaction.atomic():
-                person = Person.objects.get(id=person_id)
-                name = person.name
-                person.delete()
-                
-                logger.info(f"ลบข้อมูล: {name} (ID: {person_id})")
-                messages.success(request, f'ลบข้อมูลของ "{name}" เรียบร้อยแล้ว')
-            
-        except Person.DoesNotExist:
+    """ลบข้อมูลบุคคล - ปรับปรุงประสิทธิภาพและความปลอดภัย"""
+    try:
+        person_id = request.POST.get('person_id')
+        logger.info(f"Delete request received for person_id: {person_id}")
+        
+        if not person_id:
             messages.error(request, 'ไม่พบข้อมูลที่ต้องการลบ')
-            logger.warning(f"Person not found for deletion: {person_id}")
+            logger.warning("No person_id provided in delete request")
+            return redirect('person')
+        
+        with transaction.atomic():
+            # ใช้ get_object_or_404 เพื่อประสิทธิภาพที่ดีกว่า
+            person = get_object_or_404(Person, id=person_id, is_active=True)
+            name = person.name
             
-        except Exception as e:
-            logger.error(f"Error deleting person: {str(e)}")
-            messages.error(request, 'เกิดข้อผิดพลาดในการลบข้อมูล')
-    else:
-        logger.warning(f"Invalid method for delete_person: {request.method}")
-        messages.error(request, 'วิธีการเรียกใช้ไม่ถูกต้อง')
+            # Soft delete แทนการลบจริง
+            person.is_active = False
+            person.save()
+            
+            logger.info(f"Soft deleted person: {name} (ID: {person_id})")
+            messages.success(request, f'ลบข้อมูลของ "{name}" เรียบร้อยแล้ว')
+        
+    except Exception as e:
+        logger.error(f"Error deleting person: {str(e)}")
+        messages.error(request, 'เกิดข้อผิดพลาดในการลบข้อมูล')
     
     return redirect('person')

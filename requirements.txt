@@ -1,1 +1,23 @@
-Django>=5.2.3,<6.0 
+# Django และ dependencies หลัก
+Django>=5.2.3,<6.0
+
+# Database และ Cache (สำหรับ production)
+redis>=5.0.0
+psycopg2-binary>=2.9.0  # สำหรับ PostgreSQL
+mysqlclient>=2.2.0      # สำหรับ MySQL
+
+# Performance และ Monitoring
+django-debug-toolbar>=4.0.0
+django-extensions>=3.2.0
+
+# Security
+django-cors-headers>=4.0.0
+django-ratelimit>=4.0.0
+
+# Template และ Static files
+whitenoise>=6.5.0       # สำหรับ static files ใน production
+
+# อื่นๆ
+pillow>=10.0.0          # สำหรับการจัดการรูปภาพ
+requests>=2.31.0        # สำหรับ HTTP requests
+python-decouple>=3.8    # สำหรับ environment variables

@@ -3,7 +3,7 @@ from . import views
 
 urlpatterns = [
     # Main pages
-    path('', views.from_view, name='index'),  # เปลี่ยนหน้าแรกเป็น form
+    path('', views.person, name='index'),  # หน้าแรกเป็นรายชื่อพนักงาน
     path('about/', views.about, name='about'),
     
     # Person management

@@ -101,19 +101,19 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" aria-current="page" href="{% url 'from_view' %}">
+                            <a class="nav-link active" aria-current="page" href="{% url 'index' %}">
                                 <i class="fa-solid fa-house"></i> หน้าหลัก
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'person' %}">
-                                <i class="fa-solid fa-id-card"></i> ข้อมูลพนักงาน<br>
+                                <i class="fa-solid fa-users"></i> รายชื่อพนักงาน<br>
                                 <span style="font-size:0.95em;color:#555;"></span>
                             </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="{% url 'from_view' %}">
-                                <i class="fa-solid fa-user-edit"></i> แบบฟอร์มลงทะเบียน<br>
+                                <i class="fa-solid fa-user-plus"></i> เพิ่มพนักงานใหม่<br>
                                 <span style="font-size:0.95em;color:#555;"></span>
                             </a>
                         </li>
@@ -125,7 +125,7 @@
                         </li>
                     </ul>
                     <form class="d-flex" role="search">
-                        <input class="form-control me-2" type="search" placeholder="ค้นหา..." aria-label="Search"/>
+                        <input class="form-control me-2" type="search" placeholder="ค้นหาพนักงาน..." aria-label="Search"/>
                         <button class="btn btn-warning" type="submit"><i class="fa-solid fa-magnifying-glass"></i> ค้นหา</button>
                     </form>
                 </div>

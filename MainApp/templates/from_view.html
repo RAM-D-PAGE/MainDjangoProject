@@ -1,7 +1,7 @@
 {% extends 'basetemplates.html' %}
 {% load static %}
 
-{% block title %}ฟอร์มกรอกข้อมูล{% endblock %}
+{% block title %}เพิ่มข้อมูลพนักงาน{% endblock %}
     
 {% block content %}
 <div class="container mt-4">
@@ -14,7 +14,7 @@
                 </a>
             </li>
             <li class="breadcrumb-item active" aria-current="page">
-                <i class="fas fa-user-edit me-1"></i>ฟอร์มกรอกข้อมูล
+                <i class="fas fa-user-plus me-1"></i>เพิ่มข้อมูลพนักงาน
             </li>
         </ol>
     </nav>
@@ -29,13 +29,13 @@
                             <i class="fas fa-home me-1"></i>หน้าหลัก
                         </a>
                         <a href="{% url 'person' %}" class="btn btn-outline-success btn-sm">
-                            <i class="fas fa-table me-1"></i>ดูข้อมูลบุคคล
+                            <i class="fas fa-users me-1"></i>ดูรายชื่อพนักงาน
                         </a>
                         <a href="{% url 'about' %}" class="btn btn-outline-info btn-sm">
                             <i class="fas fa-info-circle me-1"></i>เกี่ยวกับเรา
                         </a>
                         <span class="btn btn-primary btn-sm disabled">
-                            <i class="fas fa-user-edit me-1"></i>ฟอร์มกรอกข้อมูล
+                            <i class="fas fa-user-plus me-1"></i>เพิ่มข้อมูลพนักงาน
                         </span>
                     </div>
                 </div>
@@ -105,17 +105,17 @@
                         <div class="mb-3">
                             <label for="name" class="form-label fw-bold">
                                 <i class="fas fa-user text-primary me-1"></i>
-                                ชื่อ-นามสกุล <span class="text-danger">*</span>
+                                ชื่อ-นามสกุล พนักงาน <span class="text-danger">*</span>
                             </label>
                             <input type="text" 
                                    class="form-control form-control-lg" 
                                    id="name" 
                                    name="name" 
-                                   placeholder="กรุณากรอกชื่อ-นามสกุล" 
+                                   placeholder="กรุณากรอกชื่อ-นามสกุลพนักงาน" 
                                    value="{{ edit_data.name|default:'' }}"
                                    required>
                             <div class="invalid-feedback">
-                                กรุณากรอกชื่อ-นามสกุล
+                                กรุณากรอกชื่อ-นามสกุลพนักงาน
                             </div>
                         </div>
                         
@@ -145,10 +145,10 @@
                             <button type="submit" class="btn btn-primary btn-lg">
                                 {% if edit_mode %}
                                     <i class="fas fa-save me-2"></i>
-                                    อัปเดตข้อมูล
+                                    อัปเดตข้อมูลพนักงาน
                                 {% else %}
-                                    <i class="fas fa-save me-2"></i>
-                                    บันทึกข้อมูล
+                                    <i class="fas fa-user-plus me-2"></i>
+                                    เพิ่มพนักงานใหม่
                                 {% endif %}
                             </button>
                             <div class="row g-2">
