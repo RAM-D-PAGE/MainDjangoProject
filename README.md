@@ -4,6 +4,7 @@
 [![Bootstrap](https://img.shields.io/badge/Bootstrap-5.3-blue.svg)](https://getbootstrap.com/)
 [![Python](https://img.shields.io/badge/Python-3.8+-yellow.svg)](https://python.org/)
 [![License](https://img.shields.io/badge/License-MIT-red.svg)](LICENSE)
+[![Last Updated](https://img.shields.io/badge/Updated-July%202025-brightgreen.svg)]()
 
 A modern, responsive Django web application for comprehensive employee management with advanced features and professional UI.
 
