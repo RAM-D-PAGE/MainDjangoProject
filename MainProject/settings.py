@@ -26,7 +26,12 @@ SECRET_KEY = 'django-insecure-8urqo)1+i-af&g0sc_u5t9w@&i#4mwb02kd(y^kmv2c$3z@jy*
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+# Local development
 ALLOWED_HOSTS = ['localhost', '127.0.0.1', '::1']
+
+# PythonAnywhere deployment settings (uncomment when deploying)
+# DEBUG = False
+# ALLOWED_HOSTS = ['yourusername.pythonanywhere.com', 'localhost', '127.0.0.1']
 
 
 # Application definition
@@ -252,6 +257,28 @@ else:
 # File upload settings
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+
+# PythonAnywhere Static and Media Files Configuration
+# Uncomment these lines when deploying to PythonAnywhere:
+
+# STATIC_ROOT = '/home/yourusername/MainDjangoProject/static'
+# MEDIA_ROOT = '/home/yourusername/MainDjangoProject/media'
+
+# For development (keep these active for local development)
+if DEBUG:
+    STATIC_URL = '/static/'
+    STATICFILES_DIRS = [
+        BASE_DIR / 'static',
+        BASE_DIR / 'MainApp' / 'static',
+    ]
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = BASE_DIR / 'media'
+# else:
+#     # For production (PythonAnywhere)
+#     STATIC_URL = '/static/'
+#     STATIC_ROOT = '/home/yourusername/MainDjangoProject/static'
+#     MEDIA_URL = '/media/'  
+#     MEDIA_ROOT = '/home/yourusername/MainDjangoProject/media'
 DATA_UPLOAD_MAX_NUMBER_FIELDS = 1000
 
 # Form optimization
