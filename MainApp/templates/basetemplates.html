@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #f8fafc 0%, #e0f2fe 100%);
+            font-family: 'Sarabun', Tahoma, Arial, sans-serif;
+            min-height: 100vh;
+        }
+        .navbar {
+            background: #fff;
+            border-radius: 1rem;
+            margin-top: 1rem;
+            box-shadow: 0 4px 24px 0 rgba(79,140,255,0.10), 0 1.5px 6px 0 rgba(110,231,183,0.10);
+        }
+        .navbar-brand {
+            font-weight: bold;
+            font-size: 1.7rem;
+            color: #4f8cff !important;
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            letter-spacing: 1px;
+        }
+        .logo-img {
+            height: 44px;
+            width: 44px;
+            object-fit: contain;
+            border-radius: 50%;
+            border: 2px solid #6ee7b7;
+            background: #fff;
+            box-shadow: 0 2px 8px 0 rgba(110,231,183,0.10);
+        }
+        .nav-link {
+            color: #4f8cff !important;
+            font-weight: 500;
+            border-radius: 0.5rem;
+            transition: background 0.2s, color 0.2s;
+            padding: 0.5rem 1rem;
+        }
+        .nav-link.active, .nav-link:hover {
+            background: #e0f2fe;
+            color: #1e293b !important;
+        }
+        .dropdown-menu {
+            background: #e0f2fe;
+            border-radius: 0.7rem;
+            box-shadow: 0 2px 8px 0 rgba(79,140,255,0.08);
+        }
+        .dropdown-item {
+            color: #1e293b;
+            border-radius: 0.5rem;
+            transition: background 0.2s, color 0.2s;
+        }
+        .dropdown-item:hover {
+            background: #bae6fd;
+            color: #4f8cff;
+        }
+        .form-control:focus {
+            border-color: #4f8cff;
+            box-shadow: 0 0 0 0.2rem rgba(79,140,255,.15);
+        }
+        .btn-warning {
+            border-radius: 0.5rem;
+            font-weight: 500;
+        }
+        .container {
+            max-width: 900px;
+        }
+        footer {
+            background: linear-gradient(90deg, #4f8cff 0%, #6ee7b7 100%);
+            color: #fff;
+            text-align: center;
+            padding: 1.2rem 0 0.7rem 0;
+            margin-top: 3rem;
+            border-radius: 1rem 1rem 0 0;
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+            box-shadow: 0 -2px 12px 0 rgba(79,140,255,0.08);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg shadow-sm">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'index' %}">
+                    <img src="{% static 'images/galaxy.jpg' %}" alt="โลโก้" class="logo-img"/>
+                    MySite
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{% url 'from_view' %}">
+                                <i class="fa-solid fa-house"></i> หน้าหลัก
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'person' %}">
+                                <i class="fa-solid fa-id-card"></i> ข้อมูลพนักงาน<br>
+                                <span style="font-size:0.95em;color:#555;"></span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'from_view' %}">
+                                <i class="fa-solid fa-user-edit"></i> แบบฟอร์มลงทะเบียน<br>
+                                <span style="font-size:0.95em;color:#555;"></span>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="https://www.facebook.com/anirut.sakunsi.3" target="_blank" rel="noopener">
+                                <i class="fa-solid fa-phone"></i> ติดต่อสอบถาม<br>
+                                <span style="font-size:0.95em;color:#555;"></span>
+                            </a>
+                        </li>
+                    </ul>
+                    <form class="d-flex" role="search">
+                        <input class="form-control me-2" type="search" placeholder="ค้นหา..." aria-label="Search"/>
+                        <button class="btn btn-warning" type="submit"><i class="fa-solid fa-magnifying-glass"></i> ค้นหา</button>
+                    </form>
+                </div>
+            </div>
+        </nav>
+        <div class="mt-4">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </div>
+    <footer>
+        <div>© 2025 MySite | พัฒนาโดย Django & Bootstrap</div>
+    </footer>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,290 @@
+{% extends 'basetemplates.html' %}
+{% load static %}
+
+{% block title %}ฟอร์มกรอกข้อมูล{% endblock %}
+    
+{% block content %}
+<div class="container mt-4">
+    <!-- Navigation Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'index' %}" class="text-decoration-none">
+                    <i class="fas fa-home me-1"></i>หน้าหลัก
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fas fa-user-edit me-1"></i>ฟอร์มกรอกข้อมูล
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Quick Navigation -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body py-2">
+                    <div class="d-flex flex-wrap gap-2 justify-content-center">
+                        <a href="{% url 'index' %}" class="btn btn-outline-primary btn-sm">
+                            <i class="fas fa-home me-1"></i>หน้าหลัก
+                        </a>
+                        <a href="{% url 'person' %}" class="btn btn-outline-success btn-sm">
+                            <i class="fas fa-table me-1"></i>ดูข้อมูลบุคคล
+                        </a>
+                        <a href="{% url 'about' %}" class="btn btn-outline-info btn-sm">
+                            <i class="fas fa-info-circle me-1"></i>เกี่ยวกับเรา
+                        </a>
+                        <span class="btn btn-primary btn-sm disabled">
+                            <i class="fas fa-user-edit me-1"></i>ฟอร์มกรอกข้อมูล
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Messages Section -->
+    {% if messages %}
+        <div class="row justify-content-center mb-3">
+            <div class="col-md-8">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {% if message.tags == 'success' %}
+                            <i class="fas fa-check-circle me-2"></i>
+                        {% elif message.tags == 'error' %}
+                            <i class="fas fa-exclamation-circle me-2"></i>
+                        {% else %}
+                            <i class="fas fa-info-circle me-2"></i>
+                        {% endif %}
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-lg">
+                <div class="card-header bg-primary text-white text-center">
+                    <h3 class="mb-0">
+                        <i class="fas fa-user-edit me-2"></i>
+                        {% if edit_mode %}
+                            แก้ไขข้อมูลบุคคล
+                        {% else %}
+                            แบบฟอร์มกรอกข้อมูลบุคคล
+                        {% endif %}
+                    </h3>
+                    <p class="mb-0 mt-2 opacity-75">
+                        {% if edit_mode %}
+                            กรุณาแก้ไขข้อมูลที่ต้องการเปลี่ยนแปลง
+                        {% else %}
+                            กรุณากรอกข้อมูลให้ครบถ้วน
+                        {% endif %}
+                    </p>
+                </div>
+                <div class="card-body">
+                    <form method="POST" action="{% url 'from_view' %}" class="needs-validation" novalidate>
+                        {% csrf_token %}
+                        
+                        {% if edit_mode %}
+                            <input type="hidden" name="edit_id" value="{{ edit_id }}">
+                            
+                            <!-- Edit Mode Alert -->
+                            <div class="alert alert-info alert-dismissible fade show mb-4" role="alert">
+                                <i class="fas fa-info-circle me-2"></i>
+                                <strong>โหมดแก้ไข:</strong> คุณกำลังแก้ไขข้อมูลของ "{{ edit_data.name }}"
+                                <a href="{% url 'from_view' %}" class="btn btn-sm btn-outline-secondary ms-2">
+                                    <i class="fas fa-times me-1"></i>ยกเลิก
+                                </a>
+                                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                            </div>
+                        {% endif %}
+                        
+                        <div class="mb-3">
+                            <label for="name" class="form-label fw-bold">
+                                <i class="fas fa-user text-primary me-1"></i>
+                                ชื่อ-นามสกุล <span class="text-danger">*</span>
+                            </label>
+                            <input type="text" 
+                                   class="form-control form-control-lg" 
+                                   id="name" 
+                                   name="name" 
+                                   placeholder="กรุณากรอกชื่อ-นามสกุล" 
+                                   value="{{ edit_data.name|default:'' }}"
+                                   required>
+                            <div class="invalid-feedback">
+                                กรุณากรอกชื่อ-นามสกุล
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="age" class="form-label fw-bold">
+                                <i class="fas fa-birthday-cake text-primary me-1"></i>
+                                อายุ <span class="text-danger">*</span>
+                            </label>
+                            <div class="input-group">
+                                <input type="number" 
+                                       class="form-control form-control-lg" 
+                                       id="age" 
+                                       name="age" 
+                                       placeholder="กรุณากรอกอายุ" 
+                                       min="1" 
+                                       max="100" 
+                                       value="{{ edit_data.age|default:'' }}"
+                                       required>
+                                <span class="input-group-text">ปี</span>
+                            </div>
+                            <div class="invalid-feedback">
+                                กรุณากรอกอายุ (1-100 ปี)
+                            </div>
+                        </div>
+                        
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">
+                                {% if edit_mode %}
+                                    <i class="fas fa-save me-2"></i>
+                                    อัปเดตข้อมูล
+                                {% else %}
+                                    <i class="fas fa-save me-2"></i>
+                                    บันทึกข้อมูล
+                                {% endif %}
+                            </button>
+                            <div class="row g-2">
+                                <div class="col">
+                                    <button type="reset" class="btn btn-outline-secondary w-100">
+                                        <i class="fas fa-undo me-2"></i>
+                                        {% if edit_mode %}รีเซ็ตการแก้ไข{% else %}ล้างข้อมูล{% endif %}
+                                    </button>
+                                </div>
+                                <div class="col">
+                                    {% if edit_mode %}
+                                        <a href="{% url 'from_view' %}" class="btn btn-outline-danger w-100">
+                                            <i class="fas fa-times me-2"></i>
+                                            ยกเลิกการแก้ไข
+                                        </a>
+                                    {% else %}
+                                        <button type="button" class="btn btn-outline-success w-100" onclick="viewSavedData()">
+                                            <i class="fas fa-table me-2"></i>
+                                            ดูข้อมูลที่บันทึก
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                    
+                    <!-- Form Help -->
+                    <div class="mt-4 p-3 bg-light rounded">
+                        <h6 class="fw-bold text-primary mb-2">
+                            <i class="fas fa-lightbulb me-1"></i>
+                            คำแนะนำการกรอกข้อมูล:
+                        </h6>
+                        <ul class="list-unstyled small text-muted mb-0">
+                            <li><i class="fas fa-check text-success me-2"></i>กรอกข้อมูลในช่องที่มี <span class="text-danger fw-bold">*</span> ให้ครบถ้วน</li>
+                            <li><i class="fas fa-check text-success me-2"></i>อายุต้องเป็นตัวเลขระหว่าง 1-100 ปี</li>
+                            <li><i class="fas fa-check text-success me-2"></i>ตรวจสอบความถูกต้องก่อนกดบันทึก</li>
+                            <li><i class="fas fa-check text-success me-2"></i>สามารถดูข้อมูลที่บันทึกแล้วได้ในหน้า "ดูข้อมูลบุคคล"</li>
+                        </ul>
+                    </div>
+
+                    <!-- Quick Stats -->
+                    <div class="mt-3 p-3 bg-info bg-opacity-10 rounded">
+                        <div class="row text-center">
+                            <div class="col">
+                                <div class="fw-bold text-info">
+                                    <i class="fas fa-users me-1"></i>
+                                    {{ total_persons|default:0 }}
+                                </div>
+                                <small class="text-muted">คนที่บันทึกแล้ว</small>
+                            </div>
+                            <div class="col">
+                                <div class="fw-bold text-success">
+                                    <i class="fas fa-calendar-day me-1"></i>
+                                    วันนี้
+                                </div>
+                                <small class="text-muted">{{ today|date:"d/m/Y" }}</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Bootstrap Form Validation Script -->
+<script>
+(function() {
+    'use strict';
+    
+    // Get the form
+    const form = document.querySelector('.needs-validation');
+    
+    // Add event listener
+    form.addEventListener('submit', function(event) {
+        if (!form.checkValidity()) {
+            event.preventDefault();
+            event.stopPropagation();
+        } else {
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalHTML = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังบันทึก...';
+            
+            // Re-enable after form submission
+            setTimeout(() => {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalHTML;
+            }, 2000);
+        }
+        
+        form.classList.add('was-validated');
+    }, false);
+    
+    // Real-time validation for age
+    const ageInput = document.getElementById('age');
+    ageInput.addEventListener('input', function() {
+        const value = parseInt(this.value);
+        if (value < 1 || value > 100) {
+            this.setCustomValidity('อายุต้องอยู่ระหว่าง 1-100 ปี');
+        } else {
+            this.setCustomValidity('');
+        }
+    });
+
+    // Auto-hide success messages
+    setTimeout(() => {
+        const successAlerts = document.querySelectorAll('.alert-success');
+        successAlerts.forEach(alert => {
+            const bsAlert = new bootstrap.Alert(alert);
+            bsAlert.close();
+        });
+    }, 5000);
+})();
+
+// Function to view saved data with refresh
+function viewSavedData() {
+    // Show loading state
+    const btn = event.target;
+    const originalHTML = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>กำลังโหลด...';
+    
+    // Force refresh and then navigate
+    setTimeout(() => {
+        window.location.href = "{% url 'person' %}?refresh=" + new Date().getTime();
+    }, 500);
+}
+
+// Refresh page data when returning from person view
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        // Page was loaded from cache, refresh the stats
+        location.reload(true);
+    }
+});
+</script>
+{% endblock %}

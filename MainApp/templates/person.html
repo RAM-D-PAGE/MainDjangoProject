@@ -1,0 +1,332 @@
+{% extends 'basetemplates.html' %}
+{% load static %}
+{% block title %}ข้อมูลบุคคล{% endblock %}
+
+{% block content %}
+<!-- Hidden CSRF Token for JavaScript -->
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+
+<div class="container my-4">
+    <!-- Navigation Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-4">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">
+                <a href="{% url 'index' %}" class="text-decoration-none">
+                    <i class="fas fa-home me-1"></i>หน้าหลัก
+                </a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="{% url 'from_view' %}" class="text-decoration-none">
+                    <i class="fas fa-user-edit me-1"></i>ฟอร์มกรอกข้อมูล
+                </a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">
+                <i class="fas fa-table me-1"></i>ข้อมูลบุคคล
+            </li>
+        </ol>
+    </nav>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-light">
+                <div class="card-body py-2">
+                    <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center">
+                        <div class="d-flex gap-2">
+                            <a href="{% url 'from_view' %}" class="btn btn-primary btn-sm">
+                                <i class="fas fa-plus me-1"></i>เพิ่มข้อมูลใหม่
+                            </a>
+                            <button onclick="refreshData()" class="btn btn-outline-secondary btn-sm">
+                                <i class="fas fa-sync-alt me-1"></i>รีเฟรชข้อมูล
+                            </button>
+                        </div>
+                        <div class="text-muted small">
+                            ข้อมูลทั้งหมด: <span class="fw-bold text-primary">{{ total_count|default:0 }}</span> คน
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <h2 class="text-center mb-4">
+        <i class="fas fa-table me-2 text-primary"></i>
+        ตารางรายชื่อบุคคล
+    </h2>
+    
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover align-middle bg-white shadow-sm">
+            <thead class="table-primary">
+                <tr>
+                    <th class="text-center">ลำดับ</th>
+                    <th><i class="fas fa-user me-1"></i>ชื่อ-นามสกุล</th>
+                    <th class="text-center"><i class="fas fa-birthday-cake me-1"></i>อายุ</th>
+                    <th class="text-center"><i class="fas fa-calendar me-1"></i>วันที่เพิ่ม</th>
+                    <th class="text-center"><i class="fas fa-cogs me-1"></i>จัดการ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for person in persons %}
+                <tr>
+                    <td class="text-center fw-bold">{{ forloop.counter }}</td>
+                    <td>
+                        <i class="fas fa-user-circle text-primary me-2"></i>
+                        {{ person.name }}
+                    </td>
+                    <td class="text-center">
+                        <span class="badge bg-info">{{ person.age }} ปี</span>
+                    </td>
+                    <td class="text-center text-muted">
+                        {{ person.date|date:"d/m/Y" }}
+                    </td>
+                    <td class="text-center">
+                        <div class="btn-group" role="group">
+                            <button type="button" class="btn btn-outline-warning btn-sm" 
+                                    onclick="editPerson({{ person.id }}, '{{ person.name }}', {{ person.age }})"
+                                    title="แก้ไขข้อมูล">
+                                <i class="fas fa-edit"></i>
+                            </button>
+                            <button type="button" class="btn btn-outline-danger btn-sm" 
+                                    onclick="deletePerson({{ person.id }}, '{{ person.name }}')"
+                                    title="ลบข้อมูล">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="5" class="text-center text-muted py-5">
+                        <i class="fas fa-inbox fa-3x mb-3 text-secondary"></i><br>
+                        <h5>ยังไม่มีข้อมูลบุคคล</h5>
+                        <p class="mb-0">เริ่มต้นด้วยการ
+                            <a href="{% url 'from_view' %}" class="text-decoration-none">
+                                เพิ่มข้อมูลใหม่
+                            </a>
+                        </p>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    {% if persons %}
+    <!-- Summary Stats -->
+    <div class="row mt-4">
+        <div class="col-md-12">
+            <div class="card bg-info bg-opacity-10">
+                <div class="card-body">
+                    <div class="row text-center">
+                        <div class="col-md-3">
+                            <div class="fw-bold text-info fs-4">{{ total_count }}</div>
+                            <small class="text-muted">คนทั้งหมด</small>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="fw-bold text-success fs-4">{{ avg_age|floatformat:1 }}</div>
+                            <small class="text-muted">อายุเฉลี่ย</small>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="fw-bold text-warning fs-4">
+                                {{ today|date:"d/m/Y" }}
+                            </div>
+                            <small class="text-muted">วันนี้</small>
+                        </div>
+                        <div class="col-md-3">
+                            <div class="fw-bold text-primary fs-4">
+                                <i class="fas fa-chart-line"></i>
+                            </div>
+                            <small class="text-muted">อัปเดตล่าสุด</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+// Function to refresh data
+function refreshData() {
+    const btn = event.target;
+    const originalHTML = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>กำลังรีเฟรช...';
+    
+    // Add timestamp to force refresh
+    const url = new URL(window.location);
+    url.searchParams.set('refresh', new Date().getTime());
+    window.location.href = url.toString();
+}
+
+// Auto-refresh when page is loaded with refresh parameter
+window.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.has('refresh')) {
+        // Remove refresh parameter from URL
+        const url = new URL(window.location);
+        url.searchParams.delete('refresh');
+        window.history.replaceState({}, document.title, url.toString());
+    }
+});
+
+// Show loading animation for new data button
+document.addEventListener('DOMContentLoaded', function() {
+    const addDataBtn = document.querySelector('a[href*="from_view"]');
+    if (addDataBtn) {
+        addDataBtn.addEventListener('click', function() {
+            this.innerHTML = '<span class="spinner-border spinner-border-sm me-1"></span>กำลังโหลด...';
+        });
+    }
+});
+
+// Function to edit person
+function editPerson(id, name, age) {
+    const url = new URL('{% url "from_view" %}', window.location.origin);
+    url.searchParams.set('edit', id);
+    url.searchParams.set('name', name);
+    url.searchParams.set('age', age);
+    window.location.href = url.toString();
+}
+
+// Function to delete person
+function deletePerson(id, name) {
+    console.log('Delete function called for:', id, name); // Debug
+    
+    // Simple confirm dialog as fallback
+    if (!window.bootstrap) {
+        if (confirm(`คุณต้องการลบข้อมูลของ "${name}" หรือไม่?\n\nการดำเนินการนี้ไม่สามารถยกเลิกได้`)) {
+            confirmDelete(id);
+        }
+        return;
+    }
+    
+    // Create beautiful confirmation modal
+    const modalHtml = `
+        <div class="modal fade" id="deleteModal" tabindex="-1">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            ยืนยันการลบข้อมูล
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body text-center">
+                        <i class="fas fa-user-times fa-3x text-danger mb-3"></i>
+                        <h6>คุณต้องการลบข้อมูลของ</h6>
+                        <h5 class="text-primary">"${name}"</h5>
+                        <p class="text-muted mb-0">การดำเนินการนี้ไม่สามารถยกเลิกได้</p>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>ยกเลิก
+                        </button>
+                        <button type="button" class="btn btn-danger" onclick="confirmDelete(${id})">
+                            <i class="fas fa-trash me-1"></i>ลบข้อมูล
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    // Remove existing modal if any
+    const existingModal = document.getElementById('deleteModal');
+    if (existingModal) {
+        existingModal.remove();
+    }
+    
+    // Add modal to document
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    // Show modal
+    try {
+        const modal = new bootstrap.Modal(document.getElementById('deleteModal'));
+        modal.show();
+    } catch (error) {
+        console.error('Modal error:', error);
+        // Fallback to simple confirm
+        if (confirm(`คุณต้องการลบข้อมูลของ "${name}" หรือไม่?`)) {
+            confirmDelete(id);
+        }
+    }
+}
+
+// Function to confirm deletion
+function confirmDelete(id) {
+    console.log('Confirm delete called for ID:', id); // Debug
+    
+    // Hide modal if exists
+    const modal = document.getElementById('deleteModal');
+    if (modal && window.bootstrap) {
+        const bsModal = bootstrap.Modal.getInstance(modal);
+        if (bsModal) {
+            bsModal.hide();
+        }
+    }
+    
+    // Show loading state on delete button
+    const deleteBtn = document.querySelector(`button[onclick*="deletePerson(${id}"]`);
+    if (deleteBtn) {
+        const originalHTML = deleteBtn.innerHTML;
+        deleteBtn.disabled = true;
+        deleteBtn.innerHTML = '<span class="spinner-border spinner-border-sm"></span>';
+        
+        // Restore button after timeout (in case of error)
+        setTimeout(() => {
+            if (deleteBtn.disabled) {
+                deleteBtn.disabled = false;
+                deleteBtn.innerHTML = originalHTML;
+            }
+        }, 10000);
+    }
+    
+    // Create and submit form
+    try {
+        const form = document.createElement('form');
+        form.method = 'POST';
+        form.action = '{% url "delete_person" %}';
+        form.style.display = 'none';
+        
+        // Add CSRF token
+        const csrfInput = document.createElement('input');
+        csrfInput.type = 'hidden';
+        csrfInput.name = 'csrfmiddlewaretoken';
+        
+        // Try to get CSRF token from multiple sources
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]')?.value ||
+                         document.querySelector('meta[name=csrf-token]')?.getAttribute('content') ||
+                         '{{ csrf_token }}';
+        
+        console.log('CSRF Token:', csrfToken); // Debug
+        csrfInput.value = csrfToken;
+        form.appendChild(csrfInput);
+        
+        // Add person ID
+        const idInput = document.createElement('input');
+        idInput.type = 'hidden';
+        idInput.name = 'person_id';
+        idInput.value = id;
+        form.appendChild(idInput);
+        
+        // Submit form
+        document.body.appendChild(form);
+        console.log('Submitting form...'); // Debug
+        form.submit();
+        
+    } catch (error) {
+        console.error('Error in confirmDelete:', error);
+        alert('เกิดข้อผิดพลาดในการลบข้อมูล กรุณาลองใหม่อีกครั้ง');
+        
+        // Restore button
+        if (deleteBtn) {
+            deleteBtn.disabled = false;
+            deleteBtn.innerHTML = originalHTML;
+        }
+    }
+}
+</script>
+{% endblock %}
